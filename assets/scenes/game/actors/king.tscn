@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://dwxlo2auph7nh"]
+
+[ext_resource type="Script" path="res://assets/scenes/game/actors/actor.gd" id="1_yf8gc"]
+[ext_resource type="Texture2D" uid="uid://b8sgwyjkqc4w8" path="res://assets/textures/actors/actors.png" id="2_om2xy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mhu6g"]
+atlas = ExtResource("2_om2xy")
+region = Rect2(0, 0, 16, 16)
+
+[node name="King" type="Node2D" node_paths=PackedStringArray("actor_sprite")]
+script = ExtResource("1_yf8gc")
+actor_sprite = NodePath("ActorSprite")
+
+[node name="ActorSprite" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_mhu6g")

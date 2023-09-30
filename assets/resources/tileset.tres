@@ -1,0 +1,12 @@
+[gd_resource type="TileSet" load_steps=4 format=3 uid="uid://bqiv605d3gpyl"]
+
+[ext_resource type="PackedScene" uid="uid://ca5g2ykgekm8a" path="res://assets/scenes/game/tiles/dirt.tscn" id="1_yag3f"]
+[ext_resource type="PackedScene" uid="uid://yky1bdx3fqm8" path="res://assets/scenes/game/tiles/sand.tscn" id="2_62v4a"]
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_2qx1w"]
+resource_name = "tiles"
+scenes/1/scene = ExtResource("1_yag3f")
+scenes/2/scene = ExtResource("2_62v4a")
+
+[resource]
+sources/0 = SubResource("TileSetScenesCollectionSource_2qx1w")

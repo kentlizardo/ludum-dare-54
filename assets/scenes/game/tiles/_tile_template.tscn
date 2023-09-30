@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://pepoto8423fv"]
+
+[ext_resource type="Texture2D" uid="uid://b1nhyxb4egevi" path="res://assets/textures/tiles/dirt.png" id="1_sxugs"]
+[ext_resource type="Script" path="res://assets/scenes/game/tiles/tile.gd" id="1_xxf10"]
+[ext_resource type="Texture2D" uid="uid://bkws85yrraexw" path="res://assets/textures/column.png" id="2_6pok2"]
+
+[node name="Tile" type="Node2D" node_paths=PackedStringArray("tile_sprite", "tile_under_sprite")]
+script = ExtResource("1_xxf10")
+tile_sprite = NodePath("TileSprite")
+tile_under_sprite = NodePath("TileUnderSprite")
+
+[node name="TileSprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_sxugs")
+
+[node name="TileUnderSprite" type="Sprite2D" parent="."]
+z_index = -1
+texture = ExtResource("2_6pok2")
+offset = Vector2(0, 32)
