@@ -1,26 +1,52 @@
-[gd_scene load_steps=5 format=3 uid="uid://lrhdduuk3uti"]
+[gd_scene load_steps=10 format=3 uid="uid://lrhdduuk3uti"]
 
+[ext_resource type="Texture2D" uid="uid://duwpijjj1qlpd" path="res://assets/textures/fade.png" id="1_ealof"]
 [ext_resource type="Texture2D" uid="uid://g0xykey2rqo7" path="res://assets/textures/template.png" id="1_w5sol"]
 [ext_resource type="FontFile" uid="uid://brsqfagjtyfh3" path="res://assets/fonts/m5x7.ttf" id="2_1prkt"]
 [ext_resource type="Texture2D" uid="uid://csn6n8jjqx6ec" path="res://icon.svg" id="2_5ye1p"]
-[ext_resource type="PackedScene" uid="uid://b8l8hkbytknhq" path="res://assets/scenes/game/levels/level1.tscn" id="2_uorrf"]
+[ext_resource type="PackedScene" uid="uid://c4tsc3qj27crx" path="res://assets/scenes/game/board/board_view.tscn" id="3_up2mm"]
+[ext_resource type="Texture2D" uid="uid://do3o7l4mbjnsd" path="res://assets/textures/buttons.png" id="5_h1if8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pjyrf"]
+atlas = ExtResource("5_h1if8")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1pbqv"]
+atlas = ExtResource("5_h1if8")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_huumj"]
+atlas = ExtResource("5_h1if8")
+region = Rect2(0, 32, 32, 32)
 
 [node name="RootScene" type="Node"]
 
 [node name="Root2D" type="Node2D" parent="."]
 
-[node name="Sprite2D" type="Sprite2D" parent="Root2D"]
-modulate = Color(1, 1, 1, 0.352941)
+[node name="test" type="Sprite2D" parent="Root2D"]
 texture_filter = 1
-position = Vector2(200, 120)
 texture = ExtResource("1_w5sol")
+centered = false
 
-[node name="center" type="Node2D" parent="Root2D"]
+[node name="Fade2" type="Sprite2D" parent="Root2D"]
+visible = false
+z_index = -100
+texture_filter = 1
+position = Vector2(200, 0)
+texture = ExtResource("1_ealof")
+
+[node name="Center" type="Node2D" parent="Root2D"]
 position = Vector2(200, 120)
 
-[node name="level" parent="Root2D/center" instance=ExtResource("2_uorrf")]
+[node name="BoardView" parent="Root2D/Center" instance=ExtResource("3_up2mm")]
 
-[node name="Camera2D" type="Camera2D" parent="Root2D/center"]
+[node name="Camera2D" type="Camera2D" parent="Root2D/Center"]
+
+[node name="Fade" type="Sprite2D" parent="Root2D"]
+visible = false
+texture_filter = 1
+position = Vector2(200, 0)
+texture = ExtResource("1_ealof")
 
 [node name="RootControl" type="Control" parent="."]
 custom_minimum_size = Vector2(400, 240)
@@ -28,6 +54,7 @@ layout_mode = 3
 anchors_preset = 0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="Dialog" type="TextureRect" parent="RootControl"]
 custom_minimum_size = Vector2(0, 80)
@@ -64,6 +91,10 @@ grow_vertical = 2
 texture = ExtResource("2_5ye1p")
 expand_mode = 1
 
+[node name="VoicePlayer" type="AudioStreamPlayer2D" parent="RootControl/Dialog/Bounds/PFP"]
+position = Vector2(32, 32)
+bus = &"VoiceBit"
+
 [node name="DialogText" type="RichTextLabel" parent="RootControl/Dialog/Bounds"]
 layout_mode = 1
 anchors_preset = -1
@@ -75,3 +106,34 @@ grow_vertical = 2
 theme_override_fonts/normal_font = ExtResource("2_1prkt")
 theme_override_font_sizes/normal_font_size = 16
 text = "Hi! Squire Ponn at your service!."
+
+[node name="Buttons" type="HBoxContainer" parent="RootControl"]
+custom_minimum_size = Vector2(96, 32)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -112.0
+offset_top = -48.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 0
+grow_vertical = 0
+alignment = 2
+
+[node name="End" type="TextureButton" parent="RootControl/Buttons"]
+visible = false
+layout_mode = 2
+texture_normal = SubResource("AtlasTexture_pjyrf")
+
+[node name="Confirm" type="TextureButton" parent="RootControl/Buttons"]
+visible = false
+layout_mode = 2
+texture_normal = SubResource("AtlasTexture_1pbqv")
+
+[node name="Cancel" type="TextureButton" parent="RootControl/Buttons"]
+visible = false
+layout_mode = 2
+texture_normal = SubResource("AtlasTexture_huumj")

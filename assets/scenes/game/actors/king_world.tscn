@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://bso088g7o68rf"]
+
+[ext_resource type="PackedScene" uid="uid://c084k46ou3jil" path="res://assets/scenes/game/actors/_actor_template.tscn" id="1_u0ddx"]
+
+[node name="King_World" instance=ExtResource("1_u0ddx")]

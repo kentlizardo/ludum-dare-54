@@ -16,7 +16,9 @@ stretch = true
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
 handle_input_locally = false
 canvas_item_default_texture_filter = 0
-size = Vector2i(800, 480)
+audio_listener_enable_2d = true
+physics_object_picking = true
+size = Vector2i(1600, 960)
 size_2d_override = Vector2i(400, 240)
 size_2d_override_stretch = true
 render_target_update_mode = 4

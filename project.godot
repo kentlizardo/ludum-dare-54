@@ -21,8 +21,8 @@ App="*res://assets/scenes/autoloads/app.gd"
 
 [display]
 
-window/size/viewport_width=800
-window/size/viewport_height=480
+window/size/viewport_width=1600
+window/size/viewport_height=960
 window/stretch/mode="viewport"
 
 [rendering]

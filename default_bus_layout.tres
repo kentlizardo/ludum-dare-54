@@ -1,0 +1,25 @@
+[gd_resource type="AudioBusLayout" load_steps=4 format=3 uid="uid://d3gj1lkt83fqf"]
+
+[sub_resource type="AudioEffectBandPassFilter" id="AudioEffectBandPassFilter_e2nmh"]
+resource_name = "BandPassFilter"
+
+[sub_resource type="AudioEffectDistortion" id="AudioEffectDistortion_xdni4"]
+resource_name = "Distortion"
+
+[sub_resource type="AudioEffectPitchShift" id="AudioEffectPitchShift_3eeqp"]
+resource_name = "PitchShift"
+oversampling = 16
+
+[resource]
+bus/0/effect/0/effect = SubResource("AudioEffectBandPassFilter_e2nmh")
+bus/0/effect/0/enabled = true
+bus/0/effect/1/effect = SubResource("AudioEffectDistortion_xdni4")
+bus/0/effect/1/enabled = true
+bus/1/name = &"VoiceBit"
+bus/1/solo = false
+bus/1/mute = false
+bus/1/bypass_fx = false
+bus/1/volume_db = 0.0
+bus/1/send = &"Master"
+bus/1/effect/0/effect = SubResource("AudioEffectPitchShift_3eeqp")
+bus/1/effect/0/enabled = true

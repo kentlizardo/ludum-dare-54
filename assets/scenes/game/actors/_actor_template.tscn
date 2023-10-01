@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=3 uid="uid://c084k46ou3jil"]
+
+[ext_resource type="Script" path="res://assets/scenes/game/actors/actor.gd" id="1_phnlj"]
+[ext_resource type="Texture2D" uid="uid://dcr6mm78v2kkg" path="res://assets/resources/actors_atlas.tres" id="2_2u3ti"]
+[ext_resource type="Texture2D" uid="uid://1yq12so2342k" path="res://assets/textures/fx.png" id="3_414w0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_du8ub"]
+atlas = ExtResource("3_414w0")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ra7bs"]
+size = Vector2(12, 12)
+
+[node name="_ActorTemplate" type="Node2D" node_paths=PackedStringArray("actor_sprite") groups=["Actor"]]
+script = ExtResource("1_phnlj")
+actor_sprite = NodePath("ActorSprite")
+
+[node name="SelectedSprite" type="Sprite2D" parent="."]
+visible = false
+texture = SubResource("AtlasTexture_du8ub")
+
+[node name="ActorSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_2u3ti")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D2" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_ra7bs")

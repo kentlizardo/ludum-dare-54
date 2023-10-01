@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://c4tsc3qj27crx"]
+
+[ext_resource type="Script" path="res://assets/scenes/game/board/board_view.gd" id="1_777fw"]
+
+[node name="BoardView" type="Node2D"]
+script = ExtResource("1_777fw")
+
+[node name="Tiles" type="Node2D" parent="."]
+
+[node name="Actors" type="Node2D" parent="."]
