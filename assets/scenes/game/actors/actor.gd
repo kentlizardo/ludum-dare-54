@@ -28,7 +28,9 @@ var area : Area2D = get_node("Area2D")
 
 const LABEL_F = "{attack}/{health}"
 
+static var flashing_actors : Array[Actor] = []
 func flash(ent : ActorEntity, skip : bool):
+	flashing_actors.append(self)
 	label.text = ""
 	if ent:
 		actor_sprite.texture = MasterResources.get_actor_sprite(ent.graphic)
@@ -40,6 +42,7 @@ func flash(ent : ActorEntity, skip : bool):
 		else:
 			var tw = create_tween().tween_property(self, "position", Vector2(Tile.CENTER_OFFSET + ent.pos * App.TILE_SIZE), 0.3)
 			await tw.finished
+	flashing_actors.remove_at(flashing_actors.find(self))
 
 var sleep : float = 0
 var blink_effect_duration : float = 0

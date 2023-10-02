@@ -26,7 +26,7 @@ func get_column_sprite(key : int) -> Texture2D:
 	create_atlas_from_master.bind(Rect2(16 * key, 16, 16, 48), TILES_MASTER))
 func get_decal_sprite(key : Vector2i) -> Texture2D:
 	return access_source(key, unique_column_sprites,
-	create_atlas_from_master.bind(Rect2(16 * key.x, 256 - key.y, 16, 16), TILES_MASTER)
+	create_atlas_from_master.bind(Rect2(16 * key.x, 256 - key.y - 16, 16, 16), TILES_MASTER)
 	)
 func get_actor_sprite(key: int) -> Texture2D:
 	var x : int = key % 8

@@ -41,7 +41,9 @@ var tile_pos : Vector2i:
 @onready
 var level : Level = Util.get_ancestor_if(self, func(x): return x is Level) as Level;
 
+static var flashing_tiles : Array[Tile] = []
 func flash(e : TileEntity, skip : bool):
+	flashing_tiles.append(self)
 	tile_sprite.texture = null
 	tile_under_sprite.texture = null
 	tile_decal_sprite.texture = null
@@ -57,6 +59,7 @@ func flash(e : TileEntity, skip : bool):
 		else:
 			var tw = create_tween().tween_property(self, "position", Vector2(Tile.CENTER_OFFSET + e.pos * App.TILE_SIZE), 0.3)
 			await tw.finished
+	flashing_tiles.remove_at(flashing_tiles.find(self))
 
 func _shake(delta):
 	if height_pivot.shake_value > 0.01:

@@ -177,7 +177,6 @@ func push_event(event : Event):
 		await event._push.call()
 	_events.append(event)
 	print_debug("Pushing " + event.get_class())
-	print_stack()
 	refresh_events()
 
 func _ready():

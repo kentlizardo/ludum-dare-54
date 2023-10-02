@@ -2,6 +2,9 @@ extends Resource
 
 class_name BoardEntity
 
+@export
+var helpers : Array[String] = [] # use to assist in animations
+
 var board : Node = null:
 	set(x):
 		if board:
@@ -13,7 +16,7 @@ var board : Node = null:
 		return board
 
 func _init(board : Node = null):
-	board = board
+	self.board = board
 
 func destroy():
 	board = null

@@ -7,8 +7,8 @@ signal lose
 var entities : Array[BoardEntity] = []
 
 func _ready():
-	var gen : Callable = App.data["board"]
-	gen.call(self)
+	App.data["board"].call(self)
+	App.push_event(board_event(Util.EMPTY_CALLABLE))
 
 func register_entity(e : BoardEntity):
 	entities.append(e)
@@ -18,10 +18,11 @@ func unregister_entity(e : BoardEntity):
 
 func board_event(do : Callable) -> App.Event:
 	var wrap : Callable = func():
-		do.call()
-		await App.board_view.flash(entities)
+		if do != Util.EMPTY_CALLABLE:
+			do.call()
+		await App.board_view.flash(self)
 	return App.Event.new(
 		Util.EMPTY_CALLABLE,
-		do,
+		wrap,
 		Util.EMPTY_CALLABLE,
 	)
