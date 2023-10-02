@@ -7,7 +7,7 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_du8ub"]
 atlas = ExtResource("3_414w0")
-region = Rect2(64, 0, 16, 16)
+region = Rect2(80, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cjgg2"]
 atlas = ExtResource("3_ioxwb")
@@ -23,6 +23,10 @@ actor_sprite = NodePath("ActorSprite")
 label = NodePath("RichTextLabel")
 
 [node name="SelectedSprite" type="Sprite2D" parent="."]
+visible = false
+texture = SubResource("AtlasTexture_du8ub")
+
+[node name="SelectSprite" type="Sprite2D" parent="."]
 visible = false
 texture = SubResource("AtlasTexture_du8ub")
 

@@ -11,6 +11,7 @@ resource_name = "PitchShift"
 oversampling = 16
 
 [resource]
+bus/0/volume_db = -6.14301
 bus/0/effect/0/effect = SubResource("AudioEffectBandPassFilter_e2nmh")
 bus/0/effect/0/enabled = true
 bus/0/effect/1/effect = SubResource("AudioEffectDistortion_xdni4")

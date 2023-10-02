@@ -7,21 +7,21 @@ var actor_sprite : Sprite2D
 @export
 var label : RichTextLabel
 
-@onready
-var select_sprite : Sprite2D = create_sel_sprite()
-func create_sel_sprite() -> Sprite2D:
-	var new_sprite : Sprite2D = actor_sprite.duplicate()
-	actor_sprite.add_child(new_sprite)
-	var c = (new_sprite as CanvasItem)
-	c.show_behind_parent = true
-	new_sprite.texture = new_sprite.texture.duplicate()
-	var at = new_sprite.texture as AtlasTexture
-	at.region.position.y += 16
-	new_sprite.visible = false
-	return new_sprite
+#func create_sel_sprite() -> Sprite2D:
+#	var new_sprite : Sprite2D = actor_sprite.duplicate()
+#	actor_sprite.add_child(new_sprite)
+#	var c = (new_sprite as CanvasItem)
+#	c.show_behind_parent = true
+#	new_sprite.texture = new_sprite.texture.duplicate()
+#	var at = new_sprite.texture as AtlasTexture
+#	at.region.position.y += 16
+#	new_sprite.visible = false
+#	return new_sprite
 
 @onready
 var selected_sprite : Sprite2D = get_node("SelectedSprite")
+@onready
+var select_sprite : Sprite2D = $SelectSprite
 
 @onready
 var area : Area2D = get_node("Area2D")
@@ -53,8 +53,7 @@ func destroy():
 	self.queue_free()
 
 func _exit_tree():
-	if App.current_selection.has(self):
-		App.current_selection.remove_at(App.current_selection.find(self))
+	App.remove_from_selection(self)
 
 func _process(delta : float):
 	selected_sprite.visible = App.current_selection.has(self) # Slow but fast implementation
@@ -78,12 +77,11 @@ func _ready():
 	area.mouse_entered.connect(_on_area_mouse_entered)
 	area.mouse_exited.connect(_on_area_mouse_exited)
 	area.input_event.connect(_on_area_input_event)
-
 func toggle_select():
 	if App.current_selection.has(self):
-		App.current_selection.remove_at(App.current_selection.find(self))
+		App.add_to_selection(self)
 	else:
-		App.current_selection.append(self)
+		App.remove_from_selection(self)
 func _on_area_input_event(viewport: Node, event:InputEvent, shape_idx:int):
 	if App.current_selection_types & App.SELECTION_TYPES.ACTOR != 0:
 		if event is InputEventMouseButton:

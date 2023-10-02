@@ -7,4 +7,8 @@ script = ExtResource("1_777fw")
 
 [node name="Tiles" type="Node2D" parent="."]
 
+[node name="TempTiles" type="Node2D" parent="."]
+
 [node name="Actors" type="Node2D" parent="."]
+
+[node name="TempActors" type="Node2D" parent="."]

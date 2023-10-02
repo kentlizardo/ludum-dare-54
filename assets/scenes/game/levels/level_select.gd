@@ -1,20 +1,5 @@
 extends Node2D
 
-enum ENCOUNTER_TYPE { 
-	BASIC,
-	COMBAT,
-	SPECIAL,
-}
-
-enum CHUNK_TERRAIN {
-	SAND=1,
-	SLATE=2,
-	HEX=3
-}
-
-
-const BOARD_LEVEL = preload("res://assets/scenes/game/levels/_board_level.tscn")
-
 @onready
 var tiles_root : Node2D = get_node("Tiles")
 @onready
@@ -98,83 +83,6 @@ func flash(lvl_data : LevelData):
 		await get_tree().process_frame
 	await get_tree().create_timer(1.0).timeout
 
-const PLAYER_ACTOR : ActorEntity = preload("res://assets/resources/entities/actors/king.tres")
-
-class LevelData extends RefCounted:
-	var chunks : Array[ChunkData] = []
-	var encounters : Array[EncounterData] = []
-	var team : Array[ActorTemplateData] = [
-		ActorTemplateData.from_actor(PLAYER_ACTOR),
-	]
-	var player_pos : Vector2i:
-		get:
-			return team[0].pos
-		set(x):
-			team[0].pos = x
-	var count_down : int = -1
-	func _init():
-		team[0].pos = Vector2i(-4, -4)
-
-class ActorTemplateData extends RefCounted:
-	var pos : Vector2i = Vector2i.ZERO
-	var real_actor : ActorEntity = null
-	var dummy_props : Dictionary:
-		get:
-			if real_actor:
-				var dict = Util.create_simple_property_dict(real_actor)
-				return dict
-			else: return {}
-	static func from_actor(b : ActorEntity) -> ActorTemplateData:
-		var template = ActorTemplateData.new()
-		template.real_actor = b.duplicate()
-		return template
-
-class ChunkData extends RefCounted:
-	var seed : int = 0
-	var pos : Vector2i = Vector2i.ZERO
-	var terrain : CHUNK_TERRAIN = CHUNK_TERRAIN.SAND
-	var terrain_variant : int = -1;
-	var height : int = 0
-	var hexed : bool = false
-	var cracking : int = 0 # 0 to 3, if hexed, wont crack
-	var dummy_props : Dictionary:
-		get:
-			var decal_id = -Vector2i.ONE
-			if cracking > 0:
-				decal_id = Vector2(0, cracking - 1)
-			if hexed:
-				decal_id = Vector2(3, 0)
-			return {
-				"pos": pos,
-				"height": height,
-				"terrain_id": terrain,
-				"terrain_variant": terrain_variant,
-				"decal_id": decal_id,
-			}
-
-class EncounterData extends RefCounted:
-	var type : ENCOUNTER_TYPE = ENCOUNTER_TYPE.BASIC
-	var on_meet : Callable = Util.EMPTY_CALLABLE
-	var pos : Vector2i = Vector2i.ZERO
-	var dummy_props : Dictionary:
-		get:
-			return {
-				"pos": pos,
-				
-			}
-	func _init(type : ENCOUNTER_TYPE, on_meet : Callable):
-		self.type = type
-		self.on_meet = on_meet
-	func meet():
-		if on_meet != Util.EMPTY_CALLABLE:
-			on_meet.call(self)
-		match type:
-			ENCOUNTER_TYPE.BASIC:
-				pass # add node, await until node is complete/readied.
-			ENCOUNTER_TYPE.SPECIAL:
-				pass # load level?
-			ENCOUNTER_TYPE.COMBAT:
-				App.load_level(BOARD_LEVEL)
 
 var level_data : LevelData:
 	get:
@@ -207,10 +115,11 @@ func start_turn():
 		return Util.chebyshev_dist(tile.tile_pos, App.data["levels"].player_pos) <= App.data["move_speed"] and App.data["levels"].team[0].pos != tile.tile_pos
 	App.hint = "select a tile to move to"
 	App.start_selection(App.SELECTION_TYPES.TILE,  # flags
+		true, # autoconfirm
 		travel_call, # confirm
 		Util.EMPTY_CALLABLE, # cancel
 		func(arr : Array) -> bool: return arr.size() == 1, # selection validate
-		neighboring_tiles if OS.is_debug_build() else Util.EMPTY_CALLABLE, # choice
+		neighboring_tiles if !OS.is_debug_build() else Util.EMPTY_CALLABLE, # choice
 		)
 
 func _ready():
@@ -236,15 +145,15 @@ func generate(seed : int) -> LevelData:
 			chunk.seed = gen.randi()
 			chunk.pos = grid_pos
 			if (i + j) % 2 == 0:
-				chunk.terrain = CHUNK_TERRAIN.SAND
+				chunk.terrain = ChunkData.CHUNK_TERRAIN.SAND
 			else:
-				chunk.terrain = CHUNK_TERRAIN.SLATE
+				chunk.terrain = ChunkData.CHUNK_TERRAIN.SLATE
 			data.chunks.append(chunk)
 	for x in range(gen.randi_range(14, 16)): # enemy spawns
 		var pos = unoccupied.pick_random()
 		if pos:
 			unoccupied.remove_at(unoccupied.find(pos))
-			var encounter = EncounterData.new(ENCOUNTER_TYPE.COMBAT, create_combat_encounter)
+			var encounter = EncounterData.new(EncounterData.ENCOUNTER_TYPE.COMBAT, create_combat_encounter)
 			encounter.pos = pos
 			data.encounters.append(encounter)
 	return data
@@ -266,7 +175,8 @@ func create_board(board : Board, enc : EncounterData): # argument list must be t
 			height_map[grid_pos] = 0
 	
 	var dissolve_tiles : int = 0
-	for i in range(chunk.cracking):
+	for i in range(chunk.cracking + 1):
+		dissolve_tiles += gen.randi() % 6
 		dissolve_tiles += gen.randi() % 6
 		dissolve_tiles += gen.randi() % 6
 	
@@ -281,10 +191,11 @@ func create_board(board : Board, enc : EncounterData): # argument list must be t
 		if height_map.keys().has(dissolve_pos):
 			height_map.erase(dissolve_pos)
 	
-	for i in height_map.values():
+	for key in height_map.keys():
 		var tile = TileEntity.new(board)
+		tile.pos = key
 		tile.terrain_id = 1
-		tile.height = 0
+		tile.height = height_map[key]
 
 #	var unoccupied : Array[Vector2i] = []
 #		unoccupied.append(grid_pos)

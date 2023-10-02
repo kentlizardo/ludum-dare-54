@@ -10,6 +10,8 @@ const TILE_SIZE : int = 16
 const TILE_TEMPLATE = preload("res://assets/scenes/game/tiles/_tile_template.tscn")
 const ACTOR_TEMPLATE = preload("res://assets/scenes/game/actors/_actor_template.tscn")
 
+const BOARD_LEVEL = preload("res://assets/scenes/game/levels/_board_level.tscn")
+
 enum SELECTION_TYPES {
 	TILE = 1 << 0,
 	ACTOR = 1 << 1,
@@ -60,6 +62,7 @@ var board_view : BoardView = root_2d.get_node("Center/BoardView")
 
 @onready
 var end_btn : TextureButton = root_control.get_node("Buttons/End")
+
 @onready
 var confirm_btn : TextureButton = root_control.get_node("Buttons/Confirm")
 @onready
@@ -79,29 +82,31 @@ var game_state : GAME_STATE = GAME_STATE.IDLE:
 		return game_state
 
 var selecting : bool = false
+var auto_confirm : bool = false
 var current_selection_types : int = 0
-var current_selection : Array[Variant] = []
+var current_selection : Array[Variant] = []:
+	set(x):
+		current_selection = x
+		confirm_selection()
+	get:
+		return current_selection
+func add_to_selection(v : Variant):
+	App.current_selection += [v]
+func remove_from_selection(v : Variant):
+	if current_selection.has(v):
+		var sel = current_selection.duplicate()
+		sel.remove_at(sel.find(v))
+		current_selection = sel
+
 var selection_validate : Callable = Util.EMPTY_CALLABLE # Decides if a selection is valid, e.g. minimum and maximum selections
 var choice_validate : Callable = Util.EMPTY_CALLABLE # Decides if an entity should be selectable
 var selection_confirmed : Callable = Util.EMPTY_CALLABLE
 var selection_canceled : Callable = Util.EMPTY_CALLABLE
 
-signal turn_ended
-var turn_ongoing : bool = false
-func start_turn():
-	print_debug("Turn started")
-	turn_ongoing = true
-	end_btn.pressed.connect(end_turn)
-func end_turn():
-	print_debug("Turn ended")
-	turn_ongoing = false
-	end_btn.pressed.disconnect(end_turn)
-	turn_ended.emit()
-
-func start_selection(selection_flags : int, confirm : Callable, 
+func start_selection(selection_flags : int, auto_confirm : bool, confirm : Callable, 
 		cancel : Callable = Util.EMPTY_CALLABLE, 
 		selection_validate : Callable = Util.EMPTY_CALLABLE, 
-		choice_validate : Callable = Util.EMPTY_CALLABLE):
+		choice_validate : Callable = Util.EMPTY_CALLABLE) -> Array[Variant]:
 	reset_selection()
 	current_selection_types = selection_flags
 	self.selection_validate = selection_validate
@@ -110,28 +115,36 @@ func start_selection(selection_flags : int, confirm : Callable,
 	self.choice_validate = choice_validate
 	print_debug("Now selecting " + var_to_str(current_selection_types))
 	selecting = true
+	while selecting:
+		await get_tree().process_frame
+	print_debug("Finished selecting")
+	return self.current_selection
 
-func start_selection_from(choices : Array[Variant], selection_flags : int, confirm : Callable, 
+func start_selection_from(choices : Array[Variant], selection_flags : int, auto_confirm : bool, confirm : Callable, 
 		cancel : Callable = Util.EMPTY_CALLABLE,
-		selection_validate : Callable = Util.EMPTY_CALLABLE):
+		selection_validate : Callable = Util.EMPTY_CALLABLE) -> Array[Variant]:
 	var choice_validate = func(x):
 		return choices.has(x)
-	start_selection(selection_flags, confirm, cancel, choice_validate, selection_validate)
+	return await start_selection(selection_flags, auto_confirm, confirm, cancel, selection_validate, choice_validate)
 
 func confirm_selection():
 	if selection_confirmed != Util.EMPTY_CALLABLE:
 		if selection_validate != Util.EMPTY_CALLABLE:
 			if !selection_validate.call(current_selection):
 				return
+		print_debug("Selection confirmed")
 		selection_confirmed.call(current_selection)
 	reset_selection()
 func cancel_selection():
+	print_debug("Selection cancelled")
 	if selection_canceled != Util.EMPTY_CALLABLE:
 		selection_canceled.call()
 	reset_selection()
 
 func reset_selection():
+	print_debug("Reset selection")
 	selecting = false
+	auto_confirm = false
 	selection_validate = Util.EMPTY_CALLABLE
 	selection_confirmed = Util.EMPTY_CALLABLE
 	selection_canceled = Util.EMPTY_CALLABLE
@@ -196,7 +209,8 @@ var sleep : float = 0.0
 var slow_frame : bool = false;
 var fade_accel : float = 0
 func _process(delta):
-	end_btn.visible = self.turn_ongoing and !self.selecting
+	if _events.size() > 0 and _current_event == null:
+		pop_event()
 	confirm_btn.visible = selection_confirmed != Util.EMPTY_CALLABLE
 	cancel_btn.visible = selection_canceled != Util.EMPTY_CALLABLE
 	
@@ -210,16 +224,12 @@ func _process(delta):
 	if slow_frame:
 		fade_accel += 0.02
 		fade_sprite.position.y += fade_accel
-#	if game_state == GAME_STATE.IDLE:
-#		push_event(TurnEvent.new())
-	if _events.size() > 0 and _current_event == null:
-		pop_event()
 
 const CHAR_LENGTH = 0.02
 const PITCH_RANGE = 1.0 / 12;
 const MAX_WORD_LENGTH : int = 6;
 func speak_dialog(dialog : String, pfp : Texture2D, voice_bit : AudioStream):
-	dialog_control.modulate.a = 1.0;
+	dialog_control.visible = true
 	dialog_text.text = dialog;
 	dialog_text.visible_characters = 0
 	if pfp != null:
@@ -265,7 +275,7 @@ func speak_dialog(dialog : String, pfp : Texture2D, voice_bit : AudioStream):
 					word_complete = true
 					inflection = 2
 func close_dialog():
-	dialog_control.modulate.a = 0.0;
+	dialog_control.visible = false;
 	dialog_pfp.visible = false;
 
 class Event extends RefCounted:

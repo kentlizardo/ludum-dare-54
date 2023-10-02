@@ -38,9 +38,6 @@ var tile_pos : Vector2i:
 		var v : Vector2i = (Vector2i(position) - CENTER_OFFSET) / App.TILE_SIZE
 		return v
 
-@onready
-var level : Level = Util.get_ancestor_if(self, func(x): return x is Level) as Level;
-
 static var flashing_tiles : Array[Tile] = []
 func flash(e : TileEntity, skip : bool):
 	flashing_tiles.append(self)
@@ -49,13 +46,12 @@ func flash(e : TileEntity, skip : bool):
 	tile_decal_sprite.texture = null
 	if e:
 		tile_height = e.height
-		position = e.pos * App.TILE_SIZE + CENTER_OFFSET
 		tile_sprite.texture = MasterResources.get_tile_sprite(Vector2i(e.terrain_id, e.terrain_variant))
 		tile_under_sprite.texture = MasterResources.get_column_sprite(e.terrain_id)
 		if e.decal_id != -Vector2i.ONE:
 			tile_decal_sprite.texture = MasterResources.get_decal_sprite(e.decal_id)
 		if skip:
-			position = Tile.CENTER_OFFSET + e.pos * App.TILE_SIZE
+			position = e.pos * App.TILE_SIZE + CENTER_OFFSET
 		else:
 			var tw = create_tween().tween_property(self, "position", Vector2(Tile.CENTER_OFFSET + e.pos * App.TILE_SIZE), 0.3)
 			await tw.finished
@@ -77,7 +73,7 @@ func destroy():
 
 func _exit_tree():
 	if App.current_selection.has(self):
-		App.current_selection.remove_at(App.current_selection.find(self))
+		App.remove_from_selection(self)
 
 func _process(delta):
 	area.input_pickable = App.current_selection_types & App.SELECTION_TYPES.TILE != 0
@@ -105,9 +101,9 @@ static var selected_tile : Tile = null:
 		return selected_tile
 func toggle_select():
 	if App.current_selection.has(self):
-		App.current_selection.remove_at(App.current_selection.find(self))
+		App.add_to_selection(self)
 	else:
-		App.current_selection.append(self)
+		App.remove_from_selection(self)
 func _on_area_input_event(viewport: Node, event:InputEvent, shape_idx:int):
 	if App.current_selection_types & App.SELECTION_TYPES.TILE != 0:
 		if event is InputEventMouseButton:
