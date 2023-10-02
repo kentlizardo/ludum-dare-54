@@ -146,7 +146,8 @@ var setup_board_event = App.Event.new(
 						tile_source.pos
 				elif actor_source is ActorEntity: # selecting an already deployed_actor
 					if tile_source is ActorTemplateData: # undeploying
-						actor_source.token_actor = null
+						tile_source.token_actor.board = null
+						tile_source.token_actor = null
 					elif tile_source is TileEntity: # switching locations
 						actor_source.pos = tile_source.pos
 				await App.board_view.flash(self)

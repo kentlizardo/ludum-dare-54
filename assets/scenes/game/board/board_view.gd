@@ -69,13 +69,14 @@ func flash(board : Board):
 			d_p["pos"] = Vector2i(-6, -4 + member_index)
 			actor.flash(ActorEntity.create_dummy(d_p), true)
 			# set up ground
-			var tile : Tile = App.TILE_TEMPLATE.instantiate()
-			temp_tiles_root.add_child(tile)
-			deploy_tiles[member] = tile
-			tile.flash(TileEntity.create_dummy({
-				"pos": Vector2i(-6, -4 + member_index),
-				"terrain_id": 1 if member_index % 2 == 0 else 2,
-			}), true)
+			if !deploy_tiles.has(member):
+				var tile : Tile = App.TILE_TEMPLATE.instantiate()
+				temp_tiles_root.add_child(tile)
+				deploy_tiles[member] = tile
+				tile.flash(TileEntity.create_dummy({
+					"pos": Vector2i(-6, -4 + member_index),
+					"terrain_id": 1 if member_index % 2 == 0 else 2,
+				}), true)
 		member_index += 1
 #	# Remove links that aren't in level_data
 	for key in links.keys():

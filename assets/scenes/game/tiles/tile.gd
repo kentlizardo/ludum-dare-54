@@ -101,9 +101,9 @@ static var selected_tile : Tile = null:
 		return selected_tile
 func toggle_select():
 	if App.current_selection.has(self):
-		App.add_to_selection(self)
-	else:
 		App.remove_from_selection(self)
+	else:
+		App.add_to_selection(self)
 func _on_area_input_event(viewport: Node, event:InputEvent, shape_idx:int):
 	if App.current_selection_types & App.SELECTION_TYPES.TILE != 0:
 		if event is InputEventMouseButton:

@@ -84,19 +84,19 @@ var game_state : GAME_STATE = GAME_STATE.IDLE:
 var selecting : bool = false
 var auto_confirm : bool = false
 var current_selection_types : int = 0
-var current_selection : Array[Variant] = []:
-	set(x):
-		current_selection = x
-		confirm_selection()
-	get:
-		return current_selection
+var current_selection : Array[Variant] = []
 func add_to_selection(v : Variant):
-	App.current_selection += [v]
+	print_debug("Adding "  + var_to_str(v))
+	current_selection += [v]
+	if auto_confirm:
+		confirm_selection()
 func remove_from_selection(v : Variant):
 	if current_selection.has(v):
 		var sel = current_selection.duplicate()
 		sel.remove_at(sel.find(v))
 		current_selection = sel
+	if auto_confirm:
+		confirm_selection()
 
 var selection_validate : Callable = Util.EMPTY_CALLABLE # Decides if a selection is valid, e.g. minimum and maximum selections
 var choice_validate : Callable = Util.EMPTY_CALLABLE # Decides if an entity should be selectable
@@ -109,6 +109,7 @@ func start_selection(selection_flags : int, auto_confirm : bool, confirm : Calla
 		choice_validate : Callable = Util.EMPTY_CALLABLE) -> Array[Variant]:
 	reset_selection()
 	current_selection_types = selection_flags
+	self.auto_confirm = auto_confirm
 	self.selection_validate = selection_validate
 	self.selection_confirmed = confirm
 	self.selection_canceled = cancel
