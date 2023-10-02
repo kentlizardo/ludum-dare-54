@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ActorEntity" load_steps=2 format=3 uid="uid://b5ed21i6v1mo1"]
+
+[ext_resource type="Script" path="res://assets/scenes/game/board/actor_entity.gd" id="1_ymc5o"]
+
+[resource]
+script = ExtResource("1_ymc5o")
+pos = Vector2i(-4, -4)
+graphic = 0
+controlled = 1
+health = 10
+attack = 1
+abilities = Array[Resource("res://assets/scenes/game/board/ability.gd")]([])

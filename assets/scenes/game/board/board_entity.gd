@@ -1,4 +1,4 @@
-extends RefCounted
+extends Resource
 
 class_name BoardEntity
 
@@ -12,7 +12,7 @@ var board : Node = null:
 	get:
 		return board
 
-func _init(board : Node):
+func _init(board : Node = null):
 	board = board
 
 func destroy():

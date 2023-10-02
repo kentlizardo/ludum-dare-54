@@ -2,6 +2,8 @@ extends Node
 
 class_name Util
 
+# Class of utility functions made over the course of LD54
+
 const EMPTY_CALLABLE = Callable()
 
 static func get_children_recursive(node : Node) -> Array[Node]:
@@ -34,6 +36,29 @@ static func chebyshev_dist(lhs : Vector2i, rhs : Vector2i) -> int:
 
 static func pred_if_maximum_array(count : int) -> Callable:
 	return func(arr : Array) -> bool: return arr.size() < count
+
+static func create_simple_property_dict(obj : Object) -> Dictionary:
+	var dict = {}
+	for prop in obj.get_property_list():
+		dict[prop.name] = obj.get(prop.name)
+	return dict
+
+static func process_inh_or_disabled(b : bool) -> int:
+	if b:
+		return PROCESS_MODE_INHERIT
+	else:
+		return PROCESS_MODE_DISABLED
+
+static func build_from_instructions(instr : Dictionary, obj : Object) -> Object: # Should implement with generics
+	for key in instr.keys():
+		obj.set(key, instr[key])
+	return obj
+
+static func until_all_done(arr : Array[Variant], pred : Callable):
+	var b = Batch.new()
+	for el in arr:
+		b.wrap_job_and_add(pred.bind(el))
+	await b.completed
 
 class Batch extends RefCounted:
 	signal completed

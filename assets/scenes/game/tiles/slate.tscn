@@ -1,13 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://cvstrwooupjei"]
+[gd_scene load_steps=2 format=3 uid="uid://cvstrwooupjei"]
 
 [ext_resource type="PackedScene" uid="uid://pepoto8423fv" path="res://assets/scenes/game/tiles/_tile_template.tscn" id="1_d2xut"]
-[ext_resource type="Texture2D" uid="uid://dif3c8osk5r5k" path="res://assets/textures/tiles/slate.png" id="2_ata36"]
-[ext_resource type="Texture2D" uid="uid://dnwg4xnp4efe0" path="res://assets/textures/column_slate.png" id="3_dpkl7"]
 
 [node name="Tile" instance=ExtResource("1_d2xut")]
 
 [node name="TileSprite" parent="HeightPivot" index="0"]
-texture = ExtResource("2_ata36")
+texture = null
 
 [node name="TileUnderSprite" parent="HeightPivot" index="1"]
-texture = ExtResource("3_dpkl7")
+texture = null

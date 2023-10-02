@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://bh7vwg8uh43ha"]
+[gd_scene load_steps=6 format=3 uid="uid://bh7vwg8uh43ha"]
 
 [ext_resource type="Script" path="res://assets/scenes/util/event_group.gd" id="1_n7dsc"]
 [ext_resource type="Script" path="res://assets/scenes/util/events/event_template_dialog.gd" id="2_bekiw"]
 [ext_resource type="AudioStream" uid="uid://esuqrq3mcocd" path="res://assets/audio/pawn.wav" id="3_rb4yl"]
+[ext_resource type="Script" path="res://assets/scenes/util/events/event_template_switch_scene.gd" id="4_krg7h"]
+[ext_resource type="PackedScene" uid="uid://driiuxjtx0egi" path="res://assets/scenes/game/levels/level_select.tscn" id="5_umyrj"]
 
 [node name="Intro" type="Node2D"]
 
@@ -23,5 +25,9 @@ voice_bit = ExtResource("3_rb4yl")
 script = ExtResource("2_bekiw")
 message = "huh? foo. blah blah blah blah. lorem ipsum."
 voice_bit = ExtResource("3_rb4yl")
+
+[node name="End" type="Node" parent="EventGroup"]
+script = ExtResource("4_krg7h")
+packed = ExtResource("5_umyrj")
 
 [connection signal="ready" from="EventGroup" to="EventGroup" method="queue_all_events"]

@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://ckcoj16bgsnwv"]
-
-[ext_resource type="Script" path="res://assets/scenes/game/board/board.gd" id="1_egfb8"]
-
-[node name="BoardLevel" type="Node2D"]
-
-[node name="Board" type="Node" parent="."]
-script = ExtResource("1_egfb8")

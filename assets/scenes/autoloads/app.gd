@@ -7,6 +7,9 @@ func root_get_node(path) -> Node:
 const FPS_DOT : float = 1.0 / 24.0
 const TILE_SIZE : int = 16
 
+const TILE_TEMPLATE = preload("res://assets/scenes/game/tiles/_tile_template.tscn")
+const ACTOR_TEMPLATE = preload("res://assets/scenes/game/actors/_actor_template.tscn")
+
 enum SELECTION_TYPES {
 	TILE = 1 << 0,
 	ACTOR = 1 << 1,
@@ -40,6 +43,16 @@ var dialog_control : Control = root_control.get_node("Dialog")
 @onready
 var dialog_text : RichTextLabel = root_control.get_node("Dialog/Bounds/DialogText")
 @onready
+var dialog_pfp : TextureRect = root_control.get_node("Dialog/Bounds/PFP")
+@onready
+var helper_text : RichTextLabel = root_control.get_node("HelperText")
+var hint : String = "":
+	set(x):
+		hint = x
+		helper_text.text = "[center]" + hint + "[/center]"
+	get:
+		return hint
+@onready
 var voice_player : AudioStreamPlayer2D = root_control.get_node("Dialog/Bounds/PFP/VoicePlayer")
 
 @onready
@@ -53,7 +66,7 @@ var confirm_btn : TextureButton = root_control.get_node("Buttons/Confirm")
 var cancel_btn : TextureButton = root_control.get_node("Buttons/Cancel")
 
 # Resources
-var starting_level : PackedScene = preload("res://assets/scenes/game/levels/level_select.tscn")
+var starting_level : PackedScene = ResourceLoader.load("res://assets/scenes/game/levels/intro.tscn")
 @onready
 var voice_bit : AudioStream = ResourceLoader.load("res://assets/audio/pawn.wav")
 
@@ -62,7 +75,6 @@ var data : Dictionary = {}
 var game_state : GAME_STATE = GAME_STATE.IDLE:
 	set(x):
 		game_state = x
-		print_debug(GAME_STATE.keys()[x])
 	get:
 		return game_state
 
@@ -96,6 +108,7 @@ func start_selection(selection_flags : int, confirm : Callable,
 	self.selection_confirmed = confirm
 	self.selection_canceled = cancel
 	self.choice_validate = choice_validate
+	print_debug("Now selecting " + var_to_str(current_selection_types))
 	selecting = true
 
 func start_selection_from(choices : Array[Variant], selection_flags : int, confirm : Callable, 
@@ -139,7 +152,7 @@ func load_level(packed : PackedScene):
 	if loaded_level != null:
 		loaded_level.queue_free()
 		loaded_level = null
-	loaded_level = starting_level.instantiate() 
+	loaded_level = packed.instantiate() 
 	root_2d_center.add_child(loaded_level)
 	print_debug("Loading level at " + packed.resource_path)
 
@@ -210,6 +223,9 @@ func speak_dialog(dialog : String, pfp : Texture2D, voice_bit : AudioStream):
 	dialog_control.modulate.a = 1.0;
 	dialog_text.text = dialog;
 	dialog_text.visible_characters = 0
+	if pfp != null:
+		dialog_pfp.visible = true
+		dialog_pfp.texture = pfp
 	var word_complete : bool = true;
 	var word_length : int = 0;
 	
@@ -251,6 +267,7 @@ func speak_dialog(dialog : String, pfp : Texture2D, voice_bit : AudioStream):
 					inflection = 2
 func close_dialog():
 	dialog_control.modulate.a = 0.0;
+	dialog_pfp.visible = false;
 
 class Event extends RefCounted:
 	var _push : Callable
@@ -272,23 +289,3 @@ class Event extends RefCounted:
 		self._push = push
 		self._complete = complete
 		self._start = start
-
-class DialogEvent extends Event:
-	func _init(dialog: String = "", pfp : Texture2D = null, voice_bit : AudioStream = null):
-		super(
-			Util.EMPTY_CALLABLE,
-			func ():
-				App.speak_dialog(dialog, pfp, voice_bit)
-				var old_pressed : bool = false
-				var pressed : bool = Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
-				while true:
-					pressed = Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
-					if !pressed and old_pressed:
-						break
-					await App.get_tree().process_frame
-					old_pressed = pressed
-				App.close_dialog()
-				pass,
-			Util.EMPTY_CALLABLE,
-		)
-

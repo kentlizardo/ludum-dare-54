@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cqj48s74t6sen"
-path="res://.godot/imported/column_hex.png-9ccec891e3c6877ce2ff4d5cb7a09a34.ctex"
+uid="uid://drby8toyip62n"
+path="res://.godot/imported/master_tiles.png-f7c980715cffa3c5c674509eae200691.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/textures/column_hex.png"
-dest_files=["res://.godot/imported/column_hex.png-9ccec891e3c6877ce2ff4d5cb7a09a34.ctex"]
+source_file="res://assets/textures/master_tiles.png"
+dest_files=["res://.godot/imported/master_tiles.png-f7c980715cffa3c5c674509eae200691.ctex"]
 
 [params]
 

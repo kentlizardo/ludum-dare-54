@@ -11,6 +11,8 @@ var tile_sprite : Sprite2D
 @export
 var tile_under_sprite : Sprite2D
 @export
+var tile_decal_sprite : Sprite2D
+@export
 var height_pivot : HeightPivot
 @export
 var area : Area2D
@@ -39,10 +41,22 @@ var tile_pos : Vector2i:
 @onready
 var level : Level = Util.get_ancestor_if(self, func(x): return x is Level) as Level;
 
-#var board_entity : TileEntity = null
-#func flash(e : TileEntity):
-#	tile_height = e.height
-#	position = e.pos * App.TILE_SIZE + CENTER_OFFSET
+func flash(e : TileEntity, skip : bool):
+	tile_sprite.texture = null
+	tile_under_sprite.texture = null
+	tile_decal_sprite.texture = null
+	if e:
+		tile_height = e.height
+		position = e.pos * App.TILE_SIZE + CENTER_OFFSET
+		tile_sprite.texture = MasterResources.get_tile_sprite(Vector2i(e.terrain_id, e.terrain_variant))
+		tile_under_sprite.texture = MasterResources.get_column_sprite(e.terrain_id)
+		if e.decal_id != -Vector2i.ONE:
+			tile_decal_sprite.texture = MasterResources.get_decal_sprite(e.decal_id)
+		if skip:
+			position = Tile.CENTER_OFFSET + e.pos * App.TILE_SIZE
+		else:
+			var tw = create_tween().tween_property(self, "position", Vector2(Tile.CENTER_OFFSET + e.pos * App.TILE_SIZE), 0.3)
+			await tw.finished
 
 func _shake(delta):
 	if height_pivot.shake_value > 0.01:
@@ -58,11 +72,16 @@ func destroy():
 	await get_tree().create_timer(1.0).timeout
 	self.queue_free()
 
-func _process(delta):
-	_shake(delta)
-	selected_sprite.visible = App.current_selection.has(self) # slow but easy
+func _exit_tree():
+	if App.current_selection.has(self):
+		App.current_selection.remove_at(App.current_selection.find(self))
 
-func _ready():
+func _process(delta):
+	area.input_pickable = App.current_selection_types & App.SELECTION_TYPES.TILE != 0
+	selected_sprite.visible = App.current_selection.has(self) # slow but easy
+	_shake(delta)
+
+func _ready():	
 	area.mouse_entered.connect(_on_area_mouse_entered)
 	area.mouse_exited.connect(_on_area_mouse_exited)
 	area.input_event.connect(_on_area_input_event)

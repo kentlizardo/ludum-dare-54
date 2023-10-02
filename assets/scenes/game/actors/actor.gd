@@ -4,6 +4,8 @@ class_name Actor
 
 @export
 var actor_sprite : Sprite2D
+@export
+var label : RichTextLabel
 
 @onready
 var select_sprite : Sprite2D = create_sel_sprite()
@@ -24,10 +26,20 @@ var selected_sprite : Sprite2D = get_node("SelectedSprite")
 @onready
 var area : Area2D = get_node("Area2D")
 
-@onready
-var target_pos : Vector2 = position
+const LABEL_F = "{attack}/{health}"
 
-#var board_entity : ActorEntity = null
+func flash(ent : ActorEntity, skip : bool):
+	label.text = ""
+	if ent:
+		actor_sprite.texture = MasterResources.get_actor_sprite(ent.graphic)
+		if ent.health > 0 or ent.attack > 0:
+			var t = LABEL_F.format(Util.create_simple_property_dict(ent))
+			label.text = t
+		if skip:
+			position = Tile.CENTER_OFFSET + ent.pos * App.TILE_SIZE
+		else:
+			var tw = create_tween().tween_property(self, "position", Vector2(Tile.CENTER_OFFSET + ent.pos * App.TILE_SIZE), 0.3)
+			await tw.finished
 
 var sleep : float = 0
 var blink_effect_duration : float = 0
@@ -37,8 +49,14 @@ var blink : int = 0
 func destroy():
 	self.queue_free()
 
+func _exit_tree():
+	if App.current_selection.has(self):
+		App.current_selection.remove_at(App.current_selection.find(self))
+
 func _process(delta : float):
 	selected_sprite.visible = App.current_selection.has(self) # Slow but fast implementation
+	area.input_pickable = App.current_selection_types & App.SELECTION_TYPES.ACTOR != 0
+	
 	if blink_effect_duration > 0:
 		sleep += delta
 		blink_effect_duration -= delta
@@ -50,7 +68,6 @@ func _process(delta : float):
 				blink = 0
 	else:
 		actor_sprite.visible = true
-	position = position.lerp(target_pos, 5.0 * delta)
 	if Input.is_action_just_released("ui_accept"):
 		blink_effect_duration += 1.0;
 
