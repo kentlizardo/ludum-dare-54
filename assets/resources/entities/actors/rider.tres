@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ActorEntity" load_steps=2 format=3 uid="uid://b3r6fxc3w6e5j"]
+
+[ext_resource type="Script" path="res://assets/scenes/game/board/actor_entity.gd" id="1_d00tm"]
+
+[resource]
+script = ExtResource("1_d00tm")
+pos = Vector2i(0, 0)
+name = "Rider MKII"
+graphic = 3
+controlled = 1
+inspectable = true
+health = 4
+attack = 2
+blast_radius = 0
+move_speed = 4
+move_adj = true
+move_dia = false
+horse_movement = true
+abilities = Array[Resource("res://assets/scenes/game/abilities/ability.gd")]([])
+helpers = Array[String]([])

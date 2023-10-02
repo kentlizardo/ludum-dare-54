@@ -18,16 +18,19 @@ var height_pivot : HeightPivot
 var area : Area2D
 
 @onready
-var select_sprite : Sprite2D = get_node("HeightPivot/SelectSprite")
+var select_sprite : Sprite2D = height_pivot.get_node("SelectSprite")
 @onready
-var selected_sprite : Sprite2D = get_node("HeightPivot/SelectedSprite")
+var selected_sprite : Sprite2D = height_pivot.get_node("SelectedSprite")
+@onready
+var selectable_sprite : Sprite2D = height_pivot.get_node("SelectableSprite")
 
 @export
 var tile_height : int = 0:
 	set(x):
+		var past = tile_height
 		tile_height = x
 		var tw = height_pivot.create_tween()
-		tw.tween_property(height_pivot, "position:y", int(-tile_height * App.TILE_SIZE * 0.25), 1.0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_ELASTIC)
+		tw.tween_property(height_pivot, "position:y", int(-tile_height * App.TILE_SIZE * 0.25), 1.5 + 1.0 + position.length() / 32.0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_ELASTIC)
 	get:
 		return tile_height
 
@@ -55,6 +58,7 @@ func flash(e : TileEntity, skip : bool):
 		else:
 			var tw = create_tween().tween_property(self, "position", Vector2(Tile.CENTER_OFFSET + e.pos * App.TILE_SIZE), 0.3)
 			await tw.finished
+		e.helpers = []
 	flashing_tiles.remove_at(flashing_tiles.find(self))
 
 func _shake(delta):
@@ -67,17 +71,29 @@ func _shake(delta):
 		tile_under_sprite.offset = Vector2.ZERO
 
 func destroy():
-	tile_height = -5
-	await get_tree().create_timer(1.0).timeout
+	tile_height = -14
+	await get_tree().create_timer(1.2).timeout
 	self.queue_free()
 
 func _exit_tree():
+	if flashing_tiles.has(self):
+		flashing_tiles.remove_at(flashing_tiles.find(self))
 	if App.current_selection.has(self):
 		App.remove_from_selection(self)
 
 func _process(delta):
 	area.input_pickable = App.current_selection_types & App.SELECTION_TYPES.TILE != 0
 	selected_sprite.visible = App.current_selection.has(self) # slow but easy
+	if App.selecting and App.current_selection_types & App.SELECTION_TYPES.TILE != 0:
+		selectable_sprite.visible = App.choice_validate != Util.EMPTY_CALLABLE and App.choice_validate.call(self)
+	else:
+		selectable_sprite.visible = false
+#	if App.slow_frame:
+#		if selectable_sprite.visible:
+#			if selectable_sprite.texture.region.position.x == 0:
+#				selectable_sprite.texture.region = Rect2i(0, 0, 16, 16)
+#			else:
+#				selectable_sprite.texture.region = Rect2i(16, 0, 16, 16)
 	_shake(delta)
 
 func _ready():	
@@ -85,10 +101,6 @@ func _ready():
 	area.mouse_exited.connect(_on_area_mouse_exited)
 	area.input_event.connect(_on_area_input_event)
 	height_pivot.position.y = 2 * App.TILE_SIZE
-	var dist = position.length()
-	var x = get_tree().create_timer(1.0 + dist / 32.0)
-	await x.timeout
-	tile_height = 0
 
 static var selected_tile : Tile = null:
 	set(x):

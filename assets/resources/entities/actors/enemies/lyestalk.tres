@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ActorEntity" load_steps=2 format=3 uid="uid://co0gwj2sj7c1d"]
+
+[ext_resource type="Script" path="res://assets/scenes/game/board/actor_entity.gd" id="1_wkfo7"]
+
+[resource]
+script = ExtResource("1_wkfo7")
+pos = Vector2i(0, 0)
+name = "Lyestalk"
+graphic = 19
+controlled = 2
+inspectable = true
+health = 3
+attack = 3
+blast_radius = 0
+move_speed = 0
+move_adj = true
+move_dia = true
+horse_movement = false
+abilities = Array[Resource("res://assets/scenes/game/abilities/ability.gd")]([])
+helpers = Array[String]([])

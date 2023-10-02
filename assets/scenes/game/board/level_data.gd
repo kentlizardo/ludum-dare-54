@@ -7,6 +7,10 @@ var chunks : Array[ChunkData] = []
 var encounters : Array[EncounterData] = []
 var team : Array[ActorTemplateData] = [
 	ActorTemplateData.from_actor(PLAYER_ACTOR),
+	ActorTemplateData.from_actor(load("res://assets/resources/entities/actors/pawn.tres") ),
+	ActorTemplateData.from_actor(load("res://assets/resources/entities/actors/rider.tres") ),
+	ActorTemplateData.from_actor(load("res://assets/resources/entities/actors/rook.tres") ),
+	ActorTemplateData.from_actor(load("res://assets/resources/entities/actors/sentinel.tres") ),
 ]
 var player_pos : Vector2i:
 	get:
@@ -16,3 +20,4 @@ var player_pos : Vector2i:
 var count_down : int = -1
 func _init():
 	team[0].pos = Vector2i(-4, -4)
+

@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://et2fect0ik1"]
+
+[ext_resource type="Script" path="res://assets/scenes/util/event_group.gd" id="1_sx37p"]
+[ext_resource type="Script" path="res://assets/scenes/util/events/event_template_switch_scene.gd" id="1_u44so"]
+[ext_resource type="PackedScene" uid="uid://driiuxjtx0egi" path="res://assets/scenes/game/levels/level_select.tscn" id="2_v1aly"]
+
+[node name="EncounterLevel" type="Node"]
+
+[node name="EventGroup" type="Node" parent="."]
+script = ExtResource("1_sx37p")
+
+[node name="End" type="Node" parent="EventGroup"]
+script = ExtResource("1_u44so")
+packed = ExtResource("2_v1aly")

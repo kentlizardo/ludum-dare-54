@@ -34,7 +34,7 @@ func reverse_actor(actor : Actor) -> Variant:
 
 func reverse_tile(tile : Tile) -> Variant:
 	for i in links.keys():
-		if links[i] == tile: # ActorEntity
+		if links[i] == tile: # Tile
 			return i
 	for i in deploy_tiles.keys(): # ActorTemplateData
 		if deploy_tiles[i] == tile:
@@ -67,6 +67,7 @@ func flash(board : Board):
 			deploy_links[member] = actor
 			var d_p : Dictionary = member.dummy_props
 			d_p["pos"] = Vector2i(-6, -4 + member_index)
+			d_p["tired"] = false
 			actor.flash(ActorEntity.create_dummy(d_p), true)
 			# set up ground
 			if !deploy_tiles.has(member):
@@ -105,6 +106,7 @@ func flash(board : Board):
 			var actor : Actor = deploy_links[member]
 			var d_p : Dictionary = member.dummy_props
 			d_p["pos"] = Vector2i(-6, -4 + member_index)
+			d_p["tired"] = false
 			actor.flash(ActorEntity.create_dummy(d_p), false)
 			# ground
 			var tile : Tile = deploy_tiles[member]

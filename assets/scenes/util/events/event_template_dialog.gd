@@ -1,4 +1,4 @@
-extends Node
+extends EventTemplate
 
 class_name EventTemplateDialog
 
@@ -9,7 +9,7 @@ var pfp : Texture2D = null
 @export
 var voice_bit : AudioStream = null
 
-func create_event() -> App.Event:
+static func event_template(message : String, pfp : Texture2D, voice_bit : AudioStream) -> App.Event:
 	return App.Event.new(
 			Util.EMPTY_CALLABLE,
 			func ():
@@ -26,3 +26,6 @@ func create_event() -> App.Event:
 				pass,
 			Util.EMPTY_CALLABLE,
 		)
+
+func create_event() -> App.Event:
+	return event_template(message, pfp, voice_bit)

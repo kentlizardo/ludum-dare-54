@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ActorEntity" load_steps=2 format=3 uid="uid://bfevr5rsa4r0u"]
+
+[ext_resource type="Script" path="res://assets/scenes/game/board/actor_entity.gd" id="1_6vpga"]
+
+[resource]
+script = ExtResource("1_6vpga")
+pos = Vector2i(0, 0)
+name = "RuK"
+graphic = 2
+controlled = 1
+inspectable = true
+health = 6
+attack = 2
+blast_radius = 0
+move_speed = 3
+move_adj = true
+move_dia = false
+horse_movement = false
+abilities = Array[Resource("res://assets/scenes/game/abilities/ability.gd")]([])
+helpers = Array[String]([])

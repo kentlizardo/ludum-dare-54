@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://lrhdduuk3uti"]
+[gd_scene load_steps=12 format=3 uid="uid://lrhdduuk3uti"]
 
 [ext_resource type="Texture2D" uid="uid://duwpijjj1qlpd" path="res://assets/textures/fade.png" id="1_ealof"]
 [ext_resource type="Texture2D" uid="uid://g0xykey2rqo7" path="res://assets/textures/template.png" id="1_w5sol"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://c4tsc3qj27crx" path="res://assets/scenes/game/board/board_view.tscn" id="3_up2mm"]
 [ext_resource type="Texture2D" uid="uid://dn647ixvll76p" path="res://assets/textures/robots_gui.png" id="4_hu4i2"]
 [ext_resource type="Texture2D" uid="uid://do3o7l4mbjnsd" path="res://assets/textures/buttons.png" id="5_h1if8"]
+[ext_resource type="Texture2D" uid="uid://y8jls2y6omax" path="res://assets/textures/hex_gui.png" id="6_5rpr1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pjyrf"]
 atlas = ExtResource("5_h1if8")
@@ -24,17 +25,15 @@ region = Rect2(0, 32, 32, 32)
 
 [node name="Root2D" type="Node2D" parent="."]
 
-[node name="test" type="Sprite2D" parent="Root2D"]
+[node name="BG" type="Sprite2D" parent="Root2D"]
+texture_filter = 1
+centered = false
+
+[node name="test2" type="Sprite2D" parent="Root2D"]
+visible = false
 texture_filter = 1
 texture = ExtResource("1_w5sol")
 centered = false
-
-[node name="Fade2" type="Sprite2D" parent="Root2D"]
-visible = false
-z_index = -100
-texture_filter = 1
-position = Vector2(200, 0)
-texture = ExtResource("1_ealof")
 
 [node name="Center" type="Node2D" parent="Root2D"]
 position = Vector2(200, 120)
@@ -44,10 +43,10 @@ position = Vector2(200, 120)
 [node name="Camera2D" type="Camera2D" parent="Root2D/Center"]
 
 [node name="Fade" type="Sprite2D" parent="Root2D"]
-visible = false
 texture_filter = 1
-position = Vector2(200, 0)
+position = Vector2(0, 240)
 texture = ExtResource("1_ealof")
+centered = false
 
 [node name="RootControl" type="Control" parent="."]
 custom_minimum_size = Vector2(400, 240)
@@ -57,45 +56,32 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
 
+[node name="ReferenceRect" type="ReferenceRect" parent="RootControl"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
 [node name="LeftCard" type="NinePatchRect" parent="RootControl"]
 visible = false
 layout_mode = 0
-offset_left = 16.0
-offset_top = 16.0
 offset_right = 104.0
-offset_bottom = 128.0
+offset_bottom = 160.0
 texture = ExtResource("4_hu4i2")
 patch_margin_left = 8
 patch_margin_top = 8
 patch_margin_right = 8
 patch_margin_bottom = 8
 
-[node name="LeftActions" type="VBoxContainer" parent="RootControl"]
-visible = false
-layout_mode = 0
-offset_left = 16.0
-offset_top = 128.0
-offset_right = 104.0
-offset_bottom = 240.0
-theme_override_constants/separation = 0
-
-[node name="ActionCard" type="NinePatchRect" parent="RootControl/LeftActions"]
-custom_minimum_size = Vector2(0, 32)
-layout_mode = 2
-size_flags_vertical = 0
-mouse_filter = 1
-texture = ExtResource("4_hu4i2")
-patch_margin_left = 8
-patch_margin_top = 8
-patch_margin_right = 8
-patch_margin_bottom = 8
-
-[node name="DialogText2" type="RichTextLabel" parent="RootControl/LeftActions/ActionCard"]
+[node name="CardText" type="RichTextLabel" parent="RootControl/LeftCard"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 12.0
+offset_left = 8.0
 offset_top = 8.0
 offset_right = -8.0
 offset_bottom = -8.0
@@ -103,13 +89,64 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 mouse_filter = 1
+theme_override_constants/line_separation = -2
 theme_override_fonts/normal_font = ExtResource("2_1prkt")
 theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
-text = "Attack"
-autowrap_mode = 0
+autowrap_mode = 2
+
+[node name="LeftActions" type="VBoxContainer" parent="RootControl"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 128.0
+offset_right = 120.0
+offset_bottom = 240.0
+theme_override_constants/separation = 0
+
+[node name="RightCard" type="NinePatchRect" parent="RootControl"]
+visible = false
+layout_mode = 0
+offset_left = 312.0
+offset_right = 400.0
+offset_bottom = 160.0
+texture = ExtResource("6_5rpr1")
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
+
+[node name="CardText" type="RichTextLabel" parent="RootControl/RightCard"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/line_separation = -2
+theme_override_fonts/normal_font = ExtResource("2_1prkt")
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "HexCrawler
+[FLIGHT]"
+autowrap_mode = 2
+
+[node name="RightActions" type="VBoxContainer" parent="RootControl"]
+visible = false
+layout_mode = 0
+offset_left = 296.0
+offset_top = 128.0
+offset_right = 384.0
+offset_bottom = 240.0
+theme_override_constants/separation = 0
 
 [node name="Dialog" type="TextureRect" parent="RootControl"]
+visible = false
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 1
 anchors_preset = 12
@@ -180,7 +217,7 @@ theme_override_fonts/normal_font = ExtResource("2_1prkt")
 theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
 text = "Hi! Squire Ponn at your service!."
-autowrap_mode = 0
+autowrap_mode = 2
 
 [node name="Buttons" type="HBoxContainer" parent="RootControl"]
 custom_minimum_size = Vector2(96, 32)

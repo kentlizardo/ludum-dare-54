@@ -5,8 +5,16 @@
 [resource]
 script = ExtResource("1_ymc5o")
 pos = Vector2i(-4, -4)
+name = "K.I.N.G"
 graphic = 0
 controlled = 1
+inspectable = true
 health = 10
 attack = 1
-abilities = Array[Resource("res://assets/scenes/game/board/ability.gd")]([])
+blast_radius = 0
+move_speed = 1
+move_adj = true
+move_dia = true
+tired = true
+abilities = Array[Resource("res://assets/scenes/game/abilities/ability.gd")]([])
+helpers = Array[String]([])

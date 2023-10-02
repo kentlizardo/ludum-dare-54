@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://bh7vwg8uh43ha"]
+[gd_scene load_steps=5 format=3 uid="uid://bh7vwg8uh43ha"]
 
 [ext_resource type="Script" path="res://assets/scenes/util/event_group.gd" id="1_n7dsc"]
 [ext_resource type="Script" path="res://assets/scenes/util/events/event_template_dialog.gd" id="2_bekiw"]
-[ext_resource type="AudioStream" uid="uid://esuqrq3mcocd" path="res://assets/audio/pawn.wav" id="3_rb4yl"]
+[ext_resource type="PackedScene" uid="uid://dbql2xp3p2muh" path="res://assets/scenes/game/levels/revive.tscn" id="4_025ap"]
 [ext_resource type="Script" path="res://assets/scenes/util/events/event_template_switch_scene.gd" id="4_krg7h"]
-[ext_resource type="PackedScene" uid="uid://driiuxjtx0egi" path="res://assets/scenes/game/levels/level_select.tscn" id="5_umyrj"]
 
 [node name="Intro" type="Node2D"]
 
@@ -13,21 +12,33 @@ script = ExtResource("1_n7dsc")
 
 [node name="EventTemplateDialog" type="Node" parent="EventGroup"]
 script = ExtResource("2_bekiw")
-message = "Hello!"
-voice_bit = ExtResource("3_rb4yl")
+message = "It has been ages since the War between Light and Dark plagued the Gridworld."
 
 [node name="EventTemplateDialog2" type="Node" parent="EventGroup"]
 script = ExtResource("2_bekiw")
-message = "htesting testing testing"
-voice_bit = ExtResource("3_rb4yl")
+message = "Scarred by bloodshed, the two kingdoms became unified and underwent many years to heal. A long era of peace was shown through two homelands becoming intertwined. "
 
 [node name="EventTemplateDialog3" type="Node" parent="EventGroup"]
 script = ExtResource("2_bekiw")
-message = "huh? foo. blah blah blah blah. lorem ipsum."
-voice_bit = ExtResource("3_rb4yl")
+message = "Until the accursed attacked."
+
+[node name="EventTemplateDialog4" type="Node" parent="EventGroup"]
+script = ExtResource("2_bekiw")
+message = "They moved in ways your troops could not fathom."
+
+[node name="EventTemplateDialog5" type="Node" parent="EventGroup"]
+script = ExtResource("2_bekiw")
+message = "You managed to protect a small hold of land but were gravely wounded in the process."
+
+[node name="EventTemplateDialog7" type="Node" parent="EventGroup"]
+script = ExtResource("2_bekiw")
+
+[node name="EventTemplateDialog6" type="Node" parent="EventGroup"]
+script = ExtResource("2_bekiw")
+message = "Driven to your end, your last stand lies in the platinum sand of your Queen's homeland. "
 
 [node name="End" type="Node" parent="EventGroup"]
 script = ExtResource("4_krg7h")
-packed = ExtResource("5_umyrj")
+packed = ExtResource("4_025ap")
 
 [connection signal="ready" from="EventGroup" to="EventGroup" method="queue_all_events"]

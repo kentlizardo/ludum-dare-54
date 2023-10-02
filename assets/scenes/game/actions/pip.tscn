@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://c2svhpijqgwue"]
+
+[ext_resource type="Texture2D" uid="uid://chynn1nb8d0u5" path="res://assets/resources/b_area_pip_icon.tres" id="1_5c3dj"]
+
+[node name="Pip" type="TextureRect"]
+visible = false
+custom_minimum_size = Vector2(8, 8)
+texture = ExtResource("1_5c3dj")

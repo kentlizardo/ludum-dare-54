@@ -1,0 +1,69 @@
+[gd_scene load_steps=6 format=3 uid="uid://jgae5jypnidx"]
+
+[ext_resource type="Texture2D" uid="uid://dn647ixvll76p" path="res://assets/textures/robots_gui.png" id="1_p7yt6"]
+[ext_resource type="Script" path="res://assets/scenes/game/actions/action_card.gd" id="2_154d7"]
+[ext_resource type="FontFile" uid="uid://brsqfagjtyfh3" path="res://assets/fonts/m5x7.ttf" id="2_hm8if"]
+[ext_resource type="Texture2D" uid="uid://chynn1nb8d0u5" path="res://assets/resources/b_area_pip_icon.tres" id="4_tbkui"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_15dtk"]
+atlas = ExtResource("4_tbkui")
+region = Rect2(0, 0, 8, 8)
+
+[node name="ActionCard" type="NinePatchRect" node_paths=PackedStringArray("card_text", "area_view", "area_grid")]
+custom_minimum_size = Vector2(0, 32)
+size_flags_vertical = 0
+mouse_filter = 1
+texture = ExtResource("1_p7yt6")
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
+script = ExtResource("2_154d7")
+card_text = NodePath("Text")
+area_view = NodePath("AreaView")
+area_grid = NodePath("AreaView/GridContainer")
+
+[node name="Text" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+theme_override_fonts/normal_font = ExtResource("2_hm8if")
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "Attack RNG BLST"
+autowrap_mode = 0
+
+[node name="AreaView" type="NinePatchRect" parent="."]
+visible = false
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+size_flags_horizontal = 8
+texture = SubResource("AtlasTexture_15dtk")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="GridContainer" type="GridContainer" parent="AreaView"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 5

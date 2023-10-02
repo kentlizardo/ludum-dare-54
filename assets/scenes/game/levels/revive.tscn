@@ -1,0 +1,56 @@
+[gd_scene load_steps=10 format=3 uid="uid://dbql2xp3p2muh"]
+
+[ext_resource type="Script" path="res://assets/scenes/util/event_group.gd" id="1_7r46h"]
+[ext_resource type="Script" path="res://assets/scenes/util/events/event_template_switch_bg.gd" id="2_pu4uf"]
+[ext_resource type="Texture2D" uid="uid://cr5lqfdqvvrdo" path="res://assets/textures/intro_bg.png" id="3_nltf8"]
+[ext_resource type="Script" path="res://assets/scenes/util/events/event_template_dialog.gd" id="4_5k0pu"]
+[ext_resource type="Script" path="res://assets/scenes/util/events/event_template_fade_black.gd" id="4_21wua"]
+[ext_resource type="Script" path="res://assets/scenes/util/events/event_template_switch_scene.gd" id="5_bxfw6"]
+[ext_resource type="AudioStream" uid="uid://bjaxr776lysfp" path="res://assets/audio/blue.wav" id="6_4s4cm"]
+[ext_resource type="Script" path="res://assets/scenes/util/events/event_template_respawn.gd" id="7_y13pn"]
+[ext_resource type="PackedScene" uid="uid://bc0y0vjmsj58x" path="res://assets/scenes/game/levels/_board_level.tscn" id="9_wby7q"]
+
+[node name="Intro" type="Node2D"]
+
+[node name="EventGroup" type="Node" parent="."]
+script = ExtResource("1_7r46h")
+
+[node name="EventTemplateFadeBlack" type="Node" parent="EventGroup"]
+script = ExtResource("4_21wua")
+wait_until = false
+
+[node name="EventTemplateRespawn" type="Node" parent="EventGroup" node_paths=PackedStringArray("tiles_root")]
+script = ExtResource("7_y13pn")
+tiles_root = NodePath("../..")
+
+[node name="SwitchBG" type="Node" parent="EventGroup"]
+script = ExtResource("2_pu4uf")
+texture = ExtResource("3_nltf8")
+
+[node name="EventTemplateDialog" type="Node" parent="EventGroup"]
+script = ExtResource("4_5k0pu")
+message = "Your time isn't over yet."
+voice_bit = ExtResource("6_4s4cm")
+
+[node name="EventTemplateDialog3" type="Node" parent="EventGroup"]
+script = ExtResource("4_5k0pu")
+message = "Your kingdom still falls."
+voice_bit = ExtResource("6_4s4cm")
+
+[node name="EventTemplateFadeBlack2" type="Node" parent="EventGroup"]
+script = ExtResource("4_21wua")
+fade_to_black = true
+
+[node name="EventTemplateDialog2" type="Node" parent="EventGroup"]
+script = ExtResource("4_5k0pu")
+message = "Rise, king..."
+voice_bit = ExtResource("6_4s4cm")
+
+[node name="SwitchBG2" type="Node" parent="EventGroup"]
+script = ExtResource("2_pu4uf")
+
+[node name="End" type="Node" parent="EventGroup"]
+script = ExtResource("5_bxfw6")
+packed = ExtResource("9_wby7q")
+
+[connection signal="ready" from="EventGroup" to="EventGroup" method="queue_all_events"]

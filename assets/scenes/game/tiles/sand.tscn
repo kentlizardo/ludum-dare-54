@@ -3,9 +3,3 @@
 [ext_resource type="PackedScene" uid="uid://pepoto8423fv" path="res://assets/scenes/game/tiles/_tile_template.tscn" id="1_55j8r"]
 
 [node name="Tile" instance=ExtResource("1_55j8r")]
-
-[node name="TileSprite" parent="HeightPivot" index="0"]
-texture = null
-
-[node name="TileUnderSprite" parent="HeightPivot" index="1"]
-texture = null

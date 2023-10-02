@@ -1,9 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://pepoto8423fv"]
+[gd_scene load_steps=12 format=3 uid="uid://pepoto8423fv"]
 
 [ext_resource type="Script" path="res://assets/scenes/game/tiles/tile.gd" id="1_xxf10"]
+[ext_resource type="Texture2D" uid="uid://dfrocy27p6w1n" path="res://assets/textures/column_mask.png" id="2_8ktqc"]
 [ext_resource type="Script" path="res://assets/scenes/game/tiles/height_pivot.gd" id="2_81ina"]
 [ext_resource type="Texture2D" uid="uid://drby8toyip62n" path="res://assets/textures/master_tiles.png" id="3_l8i66"]
-[ext_resource type="Texture2D" uid="uid://butbthw74un3f" path="res://assets/textures/column_shadow.png" id="5_ryi6h"]
 [ext_resource type="Texture2D" uid="uid://1yq12so2342k" path="res://assets/textures/fx.png" id="6_hwax4"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6y0u1"]
@@ -17,6 +17,10 @@ size = Vector2(16, 16)
 atlas = ExtResource("3_l8i66")
 region = Rect2(0, 16, 16, 48)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_mxevo"]
+atlas = ExtResource("6_hwax4")
+region = Rect2(0, 0, 16, 16)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_w1wju"]
 atlas = ExtResource("6_hwax4")
 region = Rect2(32, 0, 16, 16)
@@ -28,38 +32,44 @@ region = Rect2(48, 0, 16, 16)
 [node name="Tile" type="Node2D" node_paths=PackedStringArray("tile_sprite", "tile_under_sprite", "tile_decal_sprite", "height_pivot", "area")]
 y_sort_enabled = true
 script = ExtResource("1_xxf10")
-tile_sprite = NodePath("HeightPivot/TileSprite")
-tile_under_sprite = NodePath("HeightPivot/TileUnderSprite")
-tile_decal_sprite = NodePath("HeightPivot/TileSprite/DecalSprite")
-height_pivot = NodePath("HeightPivot")
-area = NodePath("HeightPivot/TileSprite/Area")
+tile_sprite = NodePath("ColumnShadow/HeightPivot/TileSprite")
+tile_under_sprite = NodePath("ColumnShadow/HeightPivot/TileUnderSprite")
+tile_decal_sprite = NodePath("ColumnShadow/HeightPivot/TileSprite/DecalSprite")
+height_pivot = NodePath("ColumnShadow/HeightPivot")
+area = NodePath("ColumnShadow/HeightPivot/TileSprite/Area")
 
-[node name="HeightPivot" type="Node2D" parent="."]
+[node name="ColumnShadow" type="Sprite2D" parent="."]
+clip_children = 1
+texture = ExtResource("2_8ktqc")
+offset = Vector2(0, 16)
+
+[node name="HeightPivot" type="Node2D" parent="ColumnShadow"]
 script = ExtResource("2_81ina")
 
-[node name="TileSprite" type="Sprite2D" parent="HeightPivot"]
+[node name="TileSprite" type="Sprite2D" parent="ColumnShadow/HeightPivot"]
 texture = SubResource("AtlasTexture_6y0u1")
 
-[node name="DecalSprite" type="Sprite2D" parent="HeightPivot/TileSprite"]
+[node name="DecalSprite" type="Sprite2D" parent="ColumnShadow/HeightPivot/TileSprite"]
 
-[node name="Area" type="Area2D" parent="HeightPivot/TileSprite"]
+[node name="Area" type="Area2D" parent="ColumnShadow/HeightPivot/TileSprite"]
 collision_layer = 32768
 collision_mask = 32768
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HeightPivot/TileSprite/Area"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ColumnShadow/HeightPivot/TileSprite/Area"]
 shape = SubResource("RectangleShape2D_vxae5")
 
-[node name="TileUnderSprite" type="Sprite2D" parent="HeightPivot"]
+[node name="TileUnderSprite" type="Sprite2D" parent="ColumnShadow/HeightPivot"]
 position = Vector2(0, 32)
 texture = SubResource("AtlasTexture_mvc6l")
 
-[node name="ColumnShadow" type="Sprite2D" parent="HeightPivot/TileUnderSprite"]
-texture = ExtResource("5_ryi6h")
+[node name="SelectableSprite" type="Sprite2D" parent="ColumnShadow/HeightPivot"]
+visible = false
+texture = SubResource("AtlasTexture_mxevo")
 
-[node name="SelectSprite" type="Sprite2D" parent="HeightPivot"]
+[node name="SelectSprite" type="Sprite2D" parent="ColumnShadow/HeightPivot"]
 visible = false
 texture = SubResource("AtlasTexture_w1wju")
 
-[node name="SelectedSprite" type="Sprite2D" parent="HeightPivot"]
+[node name="SelectedSprite" type="Sprite2D" parent="ColumnShadow/HeightPivot"]
 visible = false
 texture = SubResource("AtlasTexture_du1gd")

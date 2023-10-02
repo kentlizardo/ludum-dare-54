@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ActorEntity" load_steps=2 format=3 uid="uid://xxnkiitvwhoq"]
+
+[ext_resource type="Script" path="res://assets/scenes/game/board/actor_entity.gd" id="1_1y7is"]
+
+[resource]
+script = ExtResource("1_1y7is")
+pos = Vector2i(0, 0)
+name = "senti-NIL"
+graphic = 4
+controlled = 1
+inspectable = true
+health = 12
+attack = 2
+blast_radius = 0
+move_speed = 2
+move_adj = false
+move_dia = true
+horse_movement = false
+abilities = Array[Resource("res://assets/scenes/game/abilities/ability.gd")]([])
+helpers = Array[String]([])

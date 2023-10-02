@@ -95,6 +95,24 @@ func create_travel_event() -> App.Event:
 		Util.EMPTY_CALLABLE,
 	)
 
+# optimize later
+func crack_map(rows : int, cols : int) -> Vector2i:
+	var bag = []
+	for i in range(rows):
+		for j in range(cols):
+			var weight = abs(i - j)
+			for k in range(weight):
+				bag.push_back(Vector2i(i, j))
+	return bag.pick_random()
+func corrupt_map(rows : int, cols : int) -> Vector2i:
+	var bag = []
+	for i in range(rows):
+		for j in range(cols):
+			var weight = abs(i + j)
+			for k in range(weight):
+				bag.push_back(Vector2i(i, j))
+	return bag.pick_random()
+
 var travel_call = func(selection):
 	App.hint = ""
 	var tile : Tile = selection[0]
@@ -102,6 +120,33 @@ var travel_call = func(selection):
 		if chunk.pos == level_data.player_pos:
 			level_data.chunks.remove_at(level_data.chunks.find(chunk))
 	level_data.player_pos = tile.tile_pos
+	level_data.count_down += 1
+	if level_data.count_down % 4 == 0:
+		level_data.chunks.remove_at(level_data.chunks.find(level_data.chunks.duplicate().pick_random()))
+	if level_data.count_down % 3 == 0:
+		var random_crack = corrupt_map(8, 8)
+		while !level_data.chunks.any(func(chunk : ChunkData): return chunk.pos == random_crack):
+			random_crack = corrupt_map(8, 8)
+		var chunk = level_data.chunks.filter(func(chunk : ChunkData): return chunk.pos == random_crack)[0]
+		if chunk.hexed:
+			chunk.hexed = false
+			if chunk.terrain == ChunkData.CHUNK_TERRAIN.HEX:
+				pass
+			else:
+				chunk.terrain = ChunkData.CHUNK_TERRAIN.HEX
+		else:
+			if chunk.terrain == ChunkData.CHUNK_TERRAIN.HEX:
+				chunk.hexed = true
+			else:
+				chunk.terrain = ChunkData.CHUNK_TERRAIN.HEX
+	if level_data.count_down % 2 == 0:
+		var random_crack = crack_map(8, 8)
+		while !level_data.chunks.any(func(chunk : ChunkData): return chunk.pos == random_crack):
+			random_crack = crack_map(8, 8)
+		var chunk = level_data.chunks.filter(func(chunk : ChunkData): return chunk.pos == random_crack)[0]
+		chunk.cracking += 1
+		if chunk.cracking > 3:
+			level_data.chunks.remove_at(level_data.chunks.find(level_data.chunks.duplicate().pick_random()))
 	await flash(level_data)
 	var occluding_encounters = level_data.encounters.filter(func(x): return x.pos == level_data.player_pos)
 	if occluding_encounters.size() > 0:
@@ -109,10 +154,11 @@ var travel_call = func(selection):
 		encounter.meet()
 	else:
 		App.push_event(create_travel_event())
+
 func start_turn():
 	print_debug("Starting new turn")
 	var neighboring_tiles = func(tile : Tile) -> bool:
-		return Util.chebyshev_dist(tile.tile_pos, App.data["levels"].player_pos) <= App.data["move_speed"] and App.data["levels"].team[0].pos != tile.tile_pos
+		return Util.chebyshev_dist(tile.tile_pos, level_data.player_pos) <= level_data.team[0].real_actor.move_speed and level_data.player_pos != tile.tile_pos
 	App.hint = "select a tile to move to"
 	App.start_selection(App.SELECTION_TYPES.TILE,  # flags
 		true, # autoconfirm
@@ -156,8 +202,32 @@ func generate(seed : int) -> LevelData:
 			var encounter = EncounterData.new(EncounterData.ENCOUNTER_TYPE.COMBAT, create_combat_encounter)
 			encounter.pos = pos
 			data.encounters.append(encounter)
+	var random_encounters = [
+#		func():
+#			App.push_event(EventTemplateDialog.event_template("You travel for a while on foot, until your treads meet raw scavenger.", null, null))
+#			push_event(EventTemplateDialog.event_template("You travel for a while on foot, until your treads meet raw scavenger.", null, null)),
+#		func():
+#			App.push_event(EventTemplateDialog.event_template()),
+#		func():
+#			App.push_event(EventTemplateDialog.event_template()),
+#		func():
+#			App.push_event(EventTemplateDialog.event_template()),
+	]
+#	for x in range(gen.randi_range(14, 16)): # enemy spawns
+#		var pos = unoccupied.pick_random()
+#		if pos:
+#			unoccupied.remove_at(unoccupied.find(pos))
+#			var enc = random_encounters.find(random_encounters.pick_random())
+#			var encounter = EncounterData.new(EncounterData.ENCOUNTER_TYPE.BASIC, )
+#			encounter.pos = pos
+#			data.encounters.append(encounter)
 	return data
 
+const TERRAIN_TILES = {
+	ChunkData.CHUNK_TERRAIN.SLATE: [0,1],
+	ChunkData.CHUNK_TERRAIN.SAND: [0,1],
+	ChunkData.CHUNK_TERRAIN.HEX: [0,1,2,3],
+}
 func create_board(board : Board, enc : EncounterData): # argument list must be this way for chaining binds
 	assert(enc != null)
 	var entities : Array[BoardEntity] = []
@@ -194,8 +264,19 @@ func create_board(board : Board, enc : EncounterData): # argument list must be t
 	for key in height_map.keys():
 		var tile = TileEntity.new(board)
 		tile.pos = key
-		tile.terrain_id = 1
 		tile.height = height_map[key]
+		tile.terrain_id = chunk.terrain
+		tile.terrain_variant = TERRAIN_TILES[tile.terrain_id].pick_random()
+		tile.height = height_map[key]
+	
+	var unoccupied : Array = height_map.keys()
+	var x : ActorEntity = load("res://assets/resources/entities/actors/sentinel.tres")
+	for i in range(0, 5):
+		var pos = unoccupied.pick_random()
+		unoccupied.remove_at(unoccupied.find(pos))
+		var token = x.duplicate()
+		token.board = board
+		token.pos = pos
 
 #	var unoccupied : Array[Vector2i] = []
 #		unoccupied.append(grid_pos)
